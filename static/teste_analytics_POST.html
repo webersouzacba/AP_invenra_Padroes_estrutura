@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <title>Teste - POST /analytics</title>
+  <style>
+    body{font-family:Arial, sans-serif; margin:24px;}
+    label{display:block; margin-top:10px;}
+    input, textarea{width:520px; padding:8px; margin-top:4px;}
+    button{padding:10px 14px; margin-top:12px; cursor:pointer;}
+    pre{background:#f6f8fa; padding:12px; border-radius:8px; overflow:auto;}
+    code{background:#f6f8fa; padding:2px 4px; border-radius:4px;}
+  </style>
+</head>
+<body>
+  <h2>Página de teste do POST <code>/analytics</code></h2>
+  <p>No mesmo estilo do projeto anterior, permitindo testar sem Postman.</p>
+
+  <p>Dica: gere eventos abrindo antes a URL do jogo (entry_url): <code>/game/TESTE123?userID=ALUNO_01</code></p>
+
+  <label>activityID:
+    <input id="activityID" value="TESTE123"/>
+  </label>
+
+  <label>userID (opcional):
+    <input id="userID" value="ALUNO_01"/>
+  </label>
+
+  <label>query (opcional: default, access_count, events_count, user_events_count):
+    <input id="query" value="default"/>
+  </label>
+
+  <label>params (JSON opcional):
+    <textarea id="params" rows="4">{}</textarea>
+  </label>
+
+  <button onclick="callAnalytics()">Executar /analytics</button>
+
+  <h3>Request</h3>
+  <pre id="req">(vazio)</pre>
+
+  <h3>Response</h3>
+  <pre id="res">(aguardando)</pre>
+
+  <script>
+    async function callAnalytics(){
+      const activityID = document.getElementById("activityID").value.trim();
+      const userID = document.getElementById("userID").value.trim();
+      const query = document.getElementById("query").value.trim();
+      const paramsRaw = document.getElementById("params").value.trim();
+
+      let params = {};
+      try { params = paramsRaw ? JSON.parse(paramsRaw) : {}; } 
+      catch(e){ alert("params JSON inválido"); return; }
+
+      const payload = { activityID, query, params };
+      if(userID) payload.userID = userID;
+
+      document.getElementById("req").textContent = JSON.stringify(payload, null, 2);
+      document.getElementById("res").textContent = "carregando...";
+
+      const response = await fetch("/analytics", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(payload)
+      });
+
+      const txt = await response.text();
+      try { document.getElementById("res").textContent = JSON.stringify(JSON.parse(txt), null, 2); }
+      catch(e){ document.getElementById("res").textContent = txt; }
+    }
+  </script>
+</body>
+</html>

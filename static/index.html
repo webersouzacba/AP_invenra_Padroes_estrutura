@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <title>Testes - Activity Provider Inven!RA</title>
+  <style>
+    body{font-family:Arial, sans-serif; margin:24px;}
+    .card{border:1px solid #ddd; padding:16px; border-radius:8px; margin-bottom:16px;}
+    a{color:#0969da;}
+  </style>
+</head>
+<body>
+  <h2>Páginas de teste (HTML) – Activity Provider (Padrões Estruturais)</h2>
+  <p>Estas páginas permitem testar endpoints sem Postman, no mesmo estilo do repositório anterior.</p>
+
+  <div class="card">
+    <h3>Configuração</h3>
+    <ul>
+      <li><a href="/config" target="_blank">GET /config</a> (alias do contrato: /config_url)</li>
+      <li><a href="/params" target="_blank">GET /params</a> (alias do contrato: /json_params_url)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Deploy / user_url</h3>
+    <ul>
+      <li><a href="/static/teste_deploy_GET.html">Página de teste (GET /deploy?activityID=...)</a></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Analytics</h3>
+    <ul>
+      <li><a href="/analytics/available" target="_blank">GET /analytics/available</a> (alias do contrato: /analytics_list_url)</li>
+      <li><a href="/static/teste_analytics_POST.html">Página de teste (POST /analytics)</a></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Swagger</h3>
+    <ul>
+      <li><a href="/docs" target="_blank">/docs</a></li>
+    </ul>
+  </div>
+</body>
+</html>

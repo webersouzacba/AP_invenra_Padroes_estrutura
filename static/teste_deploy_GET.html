@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <title>Teste - GET /deploy</title>
+  <style>
+    body{font-family:Arial, sans-serif; margin:24px;}
+    label{display:block; margin-top:8px;}
+    input{width:420px; padding:8px; margin-top:4px;}
+    button{padding:10px 14px; margin-top:12px; cursor:pointer;}
+    pre{background:#f6f8fa; padding:12px; border-radius:8px; overflow:auto;}
+  </style>
+</head>
+<body>
+  <h2>Teste do endpoint GET /deploy (alias de /user_url)</h2>
+  <p>Exemplo alinhado ao repositório anterior: <code>/deploy?activityID=TESTE123</code></p>
+
+  <label>activityID:
+    <input id="activityID" value="TESTE123"/>
+  </label>
+
+  <label>userID (opcional):
+    <input id="userID" value="ALUNO_01"/>
+  </label>
+
+  <button onclick="callDeploy()">Chamar /deploy</button>
+
+  <h3>Resposta</h3>
+  <pre id="out">(aguardando)</pre>
+
+  <script>
+    async function callDeploy(){
+      const activityID = document.getElementById("activityID").value.trim();
+      const userID = document.getElementById("userID").value.trim();
+      let url = `/deploy?activityID=${encodeURIComponent(activityID)}`;
+      if(userID){ url += `&userID=${encodeURIComponent(userID)}`; }
+
+      const out = document.getElementById("out");
+      out.textContent = "carregando...";
+
+      const res = await fetch(url, {method: "GET"});
+      const txt = await res.text();
+      try { out.textContent = JSON.stringify(JSON.parse(txt), null, 2); }
+      catch(e){ out.textContent = txt; }
+    }
+  </script>
+</body>
+</html>

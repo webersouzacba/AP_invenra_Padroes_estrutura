@@ -26,56 +26,110 @@ class ActivityProviderFacade:
         self.builder = builder
         self.base_url = (base_url or "").rstrip("/")
 
-    def _effective_base_url(self, public_base_url: str = "") -> str:
+    def _effective_base_url(self, public_base_url: Optional[str] = None) -> str:
         """
-        Resolve a base URL final para montar links públicos.
-
-        Prioridade:
-          1) public_base_url (calculado no main via Request/proxy/root_path)
-          2) self.base_url (via BASE_URL, fallback)
-          3) "" (permite gerar URLs relativas, se necessário)
+        Preferir public_base_url (derivado do Request/Proxy),
+        senão usar base_url (env BASE_URL), senão retornar string vazia (URLs relativas).
         """
-        public_base_url = (public_base_url or "").strip().rstrip("/")
         if public_base_url:
-            return public_base_url
+            return public_base_url.rstrip("/")
         if self.base_url:
-            return self.base_url
+            return self.base_url.rstrip("/")
         return ""
 
-    def get_config_html(self, public_base_url: str = "") -> str:
-        base = self._effective_base_url(public_base_url)
-        docs_href = f"{base}/docs" if base else "/docs"
-        params_href = f"{base}/params" if base else "/params"
-        deploy_href = f"{base}/deploy?activityID=TESTE123" if base else "/deploy?activityID=TESTE123"
-        return f"""<!doctype html>
-<html lang="pt-br">
-<head><meta charset="utf-8"><title>Sopa de Letras - Config</title></head>
-<body>
-  <h2>Configuração - Sopa de Letras</h2>
-  <p>Exemplo de página de configuração para o professor (APSI / Inven!RA).</p>
+    def get_config_html(self, public_base_url: Optional[str] = None) -> str:
+        """
+        HTML igual ao projeto 20/20 (activity_provider_invenra).
+        Não inclui botões; a Inven!RA recolhe campos diretamente.
+        """
+        _ = self._effective_base_url(
+            # reservado (se quiser evoluir com <base href=...>)
+            public_base_url)
+        return """
+    <!DOCTYPE html>
+    <html lang="pt">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Configuração – Sopa de Letras</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 1.5rem; }
+            h1 { font-size: 1.4rem; }
+            label { display: block; margin-top: 0.8rem; font-weight: bold; }
+            input[type="text"], input[type="number"], textarea, select {
+                width: 100%; max-width: 600px; padding: 0.3rem; margin-top: 0.2rem;
+            }
+            small { color: #555; display: block; margin-top: 0.15rem; }
+            .checkbox-group { margin-top: 0.5rem; }
+        </style>
+    </head>
+    <body>
+        <h1>Configuração da Atividade – Jogo Sopa de Letras</h1>
 
-  <p><strong>Atalhos:</strong></p>
-  <ul>
-    <li><a href="{docs_href}">Swagger UI</a></li>
-    <li><a href="{params_href}">GET /params</a></li>
-    <li><a href="{deploy_href}">GET /deploy?activityID=TESTE123</a></li>
-  </ul>
+        <label for="nome">Nome da atividade</label>
+        <input id="nome" name="nome" type="text" value="Sopa de Letras – Vocabulário" />
+        <small>Identificação da atividade para o professor.</small>
 
-  <form>
-    <label>Tamanho do tabuleiro: <input name="size" type="number" value="10"/></label><br/>
-    <label>Palavras (separadas por vírgula): <input name="words" value="APSI,INVENIRA,FACADE,ADAPTER,PROXY"/></label><br/>
-    <button type="button">Guardar (exemplo)</button>
-  </form>
-</body>
-</html>"""
+        <label for="orientacoes">Orientações para o aluno</label>
+        <textarea id="orientacoes" name="orientacoes" rows="4">
+Encontre todas as palavras relacionadas ao tema proposto, no idioma alvo, dentro do tempo limite.
+        </textarea>
+        <small>Texto exibido aos alunos com instruções da atividade.</small>
+
+        <label for="tempoLimiteSegundos">Tempo limite por tentativa (segundos)</label>
+        <input id="tempoLimiteSegundos" name="tempoLimiteSegundos" type="number" value="300" min="30" max="3600" />
+        <small>Tempo máximo para o aluno completar uma tentativa.</small>
+
+        <label for="tamanhoQuadro">Tamanho do quadro (linhas/colunas)</label>
+        <input id="tamanhoQuadro" name="tamanhoQuadro" type="number" value="12" min="6" max="20" />
+        <small>Define o tamanho da grelha de letras.</small>
+
+        <div class="checkbox-group">
+            <input id="sensivelMaiusculas" name="sensivelMaiusculas" type="checkbox" />
+            <label for="sensivelMaiusculas" style="display:inline; font-weight:normal;">
+                Diferenciar maiúsculas e minúsculas
+            </label>
+        </div>
+
+        <div class="checkbox-group">
+            <input id="permitirDiagonais" name="permitirDiagonais" type="checkbox" checked />
+            <label for="permitirDiagonais" style="display:inline; font-weight:normal;">
+                Permitir palavras na diagonal
+            </label>
+        </div>
+
+        <label for="parametrosPalavras">Parâmetros de palavras (JSON)</label>
+        <textarea id="parametrosPalavras" name="parametrosPalavras" rows="6">
+{
+  "idioma_nativo": ["cachorro", "gato", "casa"],
+  "idioma_alvo": ["dog", "cat", "house"]
+}
+        </textarea>
+        <small>JSON com listas de palavras no idioma nativo e no idioma de aprendizagem.</small>
+
+        <!--
+            Não há botão "Guardar" ou "OK": a Inven!RA recolhe os valores
+            diretamente dos campos desta página.
+        -->
+    </body>
+    </html>
+        """.strip()
 
     def get_json_params_schema(self) -> Dict[str, Any]:
         return {
             "activity": "Sopa de Letras",
             "params": [
-                {"name": "size", "type": "int", "default": 10, "min": 5, "max": 20},
-                {"name": "words", "type": "list[str]", "default": [
-                    "APSI", "INVENIRA", "FACADE", "ADAPTER", "PROXY"]},
+                {"name": "nome", "type": "str",
+                    "default": "Sopa de Letras – Vocabulário"},
+                {"name": "orientacoes", "type": "str",
+                    "default": "Encontre todas as palavras..."},
+                {"name": "tempoLimiteSegundos", "type": "int",
+                    "default": 300, "min": 30, "max": 3600},
+                {"name": "tamanhoQuadro", "type": "int",
+                    "default": 12, "min": 6, "max": 20},
+                {"name": "sensivelMaiusculas", "type": "bool", "default": False},
+                {"name": "permitirDiagonais", "type": "bool", "default": True},
+                {"name": "parametrosPalavras", "type": "json",
+                    "default": {"idioma_nativo": [], "idioma_alvo": []}},
             ],
         }
 
@@ -83,17 +137,25 @@ class ActivityProviderFacade:
         self,
         activity_id: str,
         user_id: Optional[str] = None,
-        public_base_url: str = "",
+        public_base_url: Optional[str] = None,
     ) -> Dict[str, Any]:
+        """
+        Caminho completo (Facade -> Adapter -> InstanceManager -> Proxy -> Builder),
+        evitando “retorno imediato” sem persistência.
+        """
         activity_id = self.adapter.adapt_activity_id(activity_id)
         user_id = self.adapter.adapt_user_id(user_id)
 
+        # 1) InstanceManager decide instance_id
         instance_id = self.instance_manager.get_instance_id(activity_id)
         if instance_id is None:
             instance_id = f"inst_{activity_id}"
             self.instance_manager.set_instance_id(activity_id, instance_id)
 
+        # 2) Proxy verifica persistência
         existing = self.proxy.get_instance(instance_id)
+
+        # 3) Builder cria config quando necessário
         if existing is None:
             game_cfg = self.builder.build()
             payload = {
@@ -108,19 +170,20 @@ class ActivityProviderFacade:
 
         base = self._effective_base_url(public_base_url)
 
-        # Se base estiver vazio, devolve URL relativa (útil em cenários locais simples).
+        # Se base estiver vazio, retorna URL relativa (funciona local e sob proxy)
         if base:
             entry_url = f"{base}/game/{activity_id}"
         else:
             entry_url = f"/game/{activity_id}"
 
         if user_id:
-            if base:
-                entry_url = f"{base}/game/{activity_id}?userID={user_id}"
-            else:
-                entry_url = f"/game/{activity_id}?userID={user_id}"
+            entry_url = f"{entry_url}?userID={user_id}"
 
-        return {"activityID": activity_id, "entry_url": entry_url, "instance_id": instance_id}
+        return {
+            "activityID": activity_id,
+            "entry_url": entry_url,
+            "instance_id": instance_id,
+        }
 
     def list_analytics(self) -> List[Dict[str, Any]]:
         return [
@@ -137,7 +200,8 @@ class ActivityProviderFacade:
         user_id = payload.get("userID")
         query = payload.get("query") or "default"
 
-        instance_id = f"inst_{activity_id}"
+        instance_id = self.instance_manager.get_instance_id(
+            activity_id) or f"inst_{activity_id}"
         instance = self.proxy.get_instance(instance_id)
         access_count = (instance or {}).get("access_count", 0)
 
@@ -161,25 +225,29 @@ class ActivityProviderFacade:
         activity_id = self.adapter.adapt_activity_id(activity_id)
         user_id = self.adapter.adapt_user_id(user_id)
 
-        instance_id = f"inst_{activity_id}"
-        instance = self.proxy.get_instance(instance_id) or {
-            "instance_id": instance_id,
-            "activityID": activity_id,
-            "created_at": dt.datetime.utcnow().isoformat() + "Z",
-            "game_config": self.builder.build(),
-            "last_access": None,
-            "access_count": 0,
-        }
+        instance_id = self.instance_manager.get_instance_id(
+            activity_id) or f"inst_{activity_id}"
+        instance = self.proxy.get_instance(instance_id)
+
+        if instance is None:
+            # Mantém caminho completo: se alguém acessar /game direto, ainda cria/persiste corretamente
+            game_cfg = self.builder.build()
+            instance = {
+                "instance_id": instance_id,
+                "activityID": activity_id,
+                "created_at": dt.datetime.utcnow().isoformat() + "Z",
+                "game_config": game_cfg,
+                "last_access": None,
+                "access_count": 0,
+            }
 
         instance["access_count"] = int(instance.get("access_count", 0)) + 1
         instance["last_access"] = dt.datetime.utcnow().isoformat() + "Z"
         self.proxy.upsert_instance(instance_id, instance)
 
-        self.proxy.append_event(
-            {
-                "ts": dt.datetime.utcnow().isoformat() + "Z",
-                "type": "game_access",
-                "activityID": activity_id,
-                "userID": user_id,
-            }
-        )
+        self.proxy.append_event({
+            "ts": dt.datetime.utcnow().isoformat() + "Z",
+            "type": "game_access",
+            "activityID": activity_id,
+            "userID": user_id,
+        })

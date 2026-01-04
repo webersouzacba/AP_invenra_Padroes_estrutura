@@ -1,46 +1,151 @@
-<!doctype html>
-<html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt">
 <head>
-  <meta charset="utf-8"/>
-  <title>Testes - Activity Provider Inven!RA</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Activity Provider – Inven!RA</title>
+
   <style>
-    body{font-family:Arial, sans-serif; margin:24px;}
-    .card{border:1px solid #ddd; padding:16px; border-radius:8px; margin-bottom:16px;}
-    a{color:#0969da;}
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+    }
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 900px;
+      width: 100%;
+    }
+    h1 {
+      color: #2c3e50;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    h2 {
+      color: #555;
+      font-size: 1.1rem;
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      font-weight: normal;
+    }
+    .project-title {
+      color: #0066cc;
+      font-weight: bold;
+      font-size: 1.3rem;
+      margin-top: 1.5rem;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 0.5rem;
+    }
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 1.5rem;
+      color: #333;
+    }
+    ul {
+      line-height: 1.8;
+      background: #fafafa;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      border: 1px solid #eee;
+    }
+    a {
+      color: #0066cc;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    a:hover { text-decoration: underline; }
+    .muted {
+      color: #666;
+      font-size: 0.95rem;
+    }
+    .pill {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border: 1px solid #e5e5e5;
+      border-radius: 999px;
+      background: #fafafa;
+      margin-left: 0.5rem;
+      font-size: 0.9rem;
+      color: #333;
+    }
+    code {
+      background: #f6f8fa;
+      border: 1px solid #eee;
+      padding: 0.15rem 0.35rem;
+      border-radius: 6px;
+    }
   </style>
+
+  <script>
+    // Detecta automaticamente o prefixo quando publicado em subpath.
+    // Ex.: /AP_invenra_Padroes_estrutura/static/index.html  -> prefixo /AP_invenra_Padroes_estrutura
+    // Ex.: /static/index.html (local)                       -> prefixo ""
+    (function () {
+      const p = window.location.pathname;
+      const prefix = p.includes("/static/") ? p.split("/static/")[0] : "";
+      window.__APP_PREFIX__ = (prefix || "").replace(/\/$/, "");
+
+      // Para que links relativos funcionem (docs, config, params etc.)
+      const baseHref = window.__APP_PREFIX__ ? (window.__APP_PREFIX__ + "/") : "/";
+      const base = document.createElement("base");
+      base.href = baseHref;
+      document.head.appendChild(base);
+
+      window.__PUBLIC_BASE__ = window.location.origin + (window.__APP_PREFIX__ || "");
+    })();
+  </script>
 </head>
+
 <body>
-  <h2>Páginas de teste (HTML) – Activity Provider (Padrões Estruturais)</h2>
-  <p>Estas páginas permitem testar endpoints sem Postman, no mesmo estilo do repositório anterior.</p>
-
   <div class="card">
-    <h3>Configuração</h3>
+    <h1>MEIW – Mestrado em Engenharia Informática e Tecnologia Web</h1>
+    <h2>Arquitetura e Padrões de Software (APSI)</h2>
+    <h2>Ano letivo 2025/2026</h2>
+
+    <div class="project-title">Arquitetura Inven!RA - Activity Provider – Sopa de Letras (Padrões Estruturais)</div>
+
+    <p class="muted">
+      URL pública (detectada): <span class="pill" id="publicBase">(a calcular...)</span>
+    </p>
+
+    <p>Bem-vindo. Abaixo encontra uma lista dos serviços REST disponíveis para integração:</p>
+
+    <h3 class="section-title">📡 Endpoints</h3>
     <ul>
-      <li><a href="/config" target="_blank">GET /config</a> (alias do contrato: /config_url)</li>
-      <li><a href="/params" target="_blank">GET /params</a> (alias do contrato: /json_params_url)</li>
+      <li><a href="docs" target="_blank">/docs</a> – Swagger UI (OpenAPI)</li>
+      <li><a href="openapi.json" target="_blank">/openapi.json</a> – OpenAPI (JSON)</li>
+      <li><a href="config" target="_blank">/config</a> – Página de configuração da atividade (HTML)</li>
+      <li><a href="params" target="_blank">/params</a> – Lista de parâmetros configuráveis (JSON)</li>
+      <li><a href="analytics/available" target="_blank">/analytics/available</a> – Lista de analytics disponíveis (JSON)</li>
+      <li><a href="deploy?activityID=TESTE123" target="_blank">/deploy?activityID=TESTE123</a> – Simulação de Deploy (GET)</li>
     </ul>
+
+    <h3 class="section-title">🧪 Testes</h3>
+    <ul>
+      <li><a href="static/teste_deploy_GET.html" target="_blank">Página de teste do GET /deploy</a></li>
+      <li><a href="static/teste_analytics_POST.html" target="_blank">Página de teste do POST /analytics</a></li>
+    </ul>
+
+    <h3 class="section-title">🌐 Debug</h3>
+    <ul>
+      <li><a href="./" target="_blank">/</a> – Página principal (API)</li>
+    </ul>
+
+    <p class="muted">
+      Nota: se você acessar somente <code>http://69.6.220.255/docs</code> (sem o prefixo),
+      é esperado dar 404 porque o Nginx está publicado em subpath.
+    </p>
   </div>
 
-  <div class="card">
-    <h3>Deploy / user_url</h3>
-    <ul>
-      <li><a href="/static/teste_deploy_GET.html">Página de teste (GET /deploy?activityID=...)</a></li>
-    </ul>
-  </div>
-
-  <div class="card">
-    <h3>Analytics</h3>
-    <ul>
-      <li><a href="/analytics/available" target="_blank">GET /analytics/available</a> (alias do contrato: /analytics_list_url)</li>
-      <li><a href="/static/teste_analytics_POST.html">Página de teste (POST /analytics)</a></li>
-    </ul>
-  </div>
-
-  <div class="card">
-    <h3>Swagger</h3>
-    <ul>
-      <li><a href="/docs" target="_blank">/docs</a></li>
-    </ul>
-  </div>
+  <script>
+    document.getElementById("publicBase").textContent = window.__PUBLIC_BASE__ + "/";
+  </script>
 </body>
 </html>

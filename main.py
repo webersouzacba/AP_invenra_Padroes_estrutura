@@ -1,3 +1,4 @@
+from typing import Optional
 from __future__ import annotations
 
 import os
@@ -34,7 +35,8 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    data_path = os.getenv("DATA_PATH", os.path.join(os.path.dirname(__file__), "data", "store.json"))
+    data_path = os.getenv("DATA_PATH", os.path.join(
+        os.path.dirname(__file__), "data", "store.json"))
     db = JsonFileDatabase(data_path)
     proxy = PersistenceProxy(db)
     adapter = ContractAdapter()
@@ -77,7 +79,11 @@ def create_app() -> FastAPI:
 
     @app.get("/user_url", response_model=UserUrlResponse, tags=["InvenRA Contract"])
     @app.get("/deploy", response_model=UserUrlResponse, tags=["Compatibility"])
-    def user_url(activityID: str = Query(..., description="Activity identifier"), userID: str | None = Query(default=None)):
+    def user_url(
+        activityID: str = Query(..., description="Activity identifier"),
+        userID: Optional[str] = Query(default=None),
+    ):
+
         return facade.resolve_user_url(activityID, userID)
 
     @app.get("/analytics_list_url", response_model=AnalyticsListResponse, tags=["InvenRA Contract"])

@@ -99,7 +99,7 @@ def create_app() -> FastAPI:
         return {"activityID": payload["activityID"], "query": payload["query"], "result": result}
 
     @app.get("/game/{activityID}", response_class=HTMLResponse, tags=["Demo"])
-    def game_page(activityID: str, userID: str | None = None):
+    def game_page(activityID: str, userID: Optional[str] = None):
         facade.track_game_access(activityID, userID)
         return f"""<!doctype html>
 <html lang='pt-br'>

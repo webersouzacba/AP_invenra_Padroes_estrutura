@@ -8,9 +8,32 @@ from .contract_adapter import ContractAdapter
 from .instance_manager import InstanceManager
 from .persistence_proxy import PersistenceProxy
 
+# Contrato de parâmetros da atividade no formato Inven!RA.
+# Fonte única de verdade para o endpoint /params /json_params_url.
+_PARAMS_CONTRACT: list[dict[str, str]] = [
+    {"name": "nome", "type": "text/plain"},
+    {"name": "orientacoes", "type": "text/plain"},
+    {"name": "tempoLimiteSegundos", "type": "integer"},
+    {"name": "tamanhoQuadro", "type": "integer"},
+    {"name": "sensivelMaiusculas", "type": "boolean"},
+    {"name": "permitirDiagonais", "type": "boolean"},
+    {"name": "parametrosPalavras", "type": "json"},
+]
+
 
 class ActivityProviderFacade:
     """Facade (Structural Pattern) for Activity Provider use-cases."""
+
+    def get_params_contract(self) -> list[dict[str, str]]:
+        """
+        Devolve o contrato de parâmetros no formato esperado pela Inven!RA:
+
+        [
+          {"name": "nome", "type": "text/plain"},
+          ...
+        ]
+        """
+        return self._params_contract
 
     def __init__(
         self,
@@ -25,6 +48,7 @@ class ActivityProviderFacade:
         self.instance_manager = instance_manager
         self.builder = builder
         self.base_url = (base_url or "").rstrip("/")
+        self._params_contract = _PARAMS_CONTRACT
 
     def _effective_base_url(self, public_base_url: Optional[str] = None) -> str:
         """
@@ -113,25 +137,6 @@ Encontre todas as palavras relacionadas ao tema proposto, no idioma alvo, dentro
     </body>
     </html>
         """.strip()
-
-    def get_json_params_schema(self) -> Dict[str, Any]:
-        return {
-            "activity": "Sopa de Letras",
-            "params": [
-                {"name": "nome", "type": "str",
-                    "default": "Sopa de Letras – Vocabulário"},
-                {"name": "orientacoes", "type": "str",
-                    "default": "Encontre todas as palavras..."},
-                {"name": "tempoLimiteSegundos", "type": "int",
-                    "default": 300, "min": 30, "max": 3600},
-                {"name": "tamanhoQuadro", "type": "int",
-                    "default": 12, "min": 6, "max": 20},
-                {"name": "sensivelMaiusculas", "type": "bool", "default": False},
-                {"name": "permitirDiagonais", "type": "bool", "default": True},
-                {"name": "parametrosPalavras", "type": "json",
-                    "default": {"idioma_nativo": [], "idioma_alvo": []}},
-            ],
-        }
 
     def resolve_user_url(
         self,

@@ -1,27 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Teste – POST /analytics</title>
+  <meta charset="UTF-8">
+  <title>Teste do serviço POST /analytics</title>
   <style>
-    body { font-family: 'Segoe UI', Tahoma, sans-serif; background:#f0f2f5; margin:0; padding:2rem; }
-    .card { background:#fff; max-width:900px; margin:0 auto; padding:1.5rem; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,.1); }
-    label { display:block; margin-top:1rem; font-weight:600; }
-    input, select, textarea { width:100%; padding:.6rem; border:1px solid #ddd; border-radius:8px; font-family:inherit; }
-    textarea { min-height:120px; }
-    button { margin-top:1rem; padding:.7rem 1rem; border:0; border-radius:8px; background:#0066cc; color:#fff; font-weight:700; cursor:pointer; }
-    button:hover { opacity:.95; }
-    pre { background:#0b1020; color:#d6e7ff; padding:1rem; border-radius:10px; overflow:auto; }
-    a { color:#0066cc; font-weight:700; text-decoration:none; }
-    a:hover { text-decoration:underline; }
-    .muted { color:#666; }
-    .row { display:flex; gap:1rem; }
-    .col { flex:1; }
-    @media (max-width: 720px) { .row { display:block; } }
+    body { font-family: Arial, sans-serif; margin: 1.5rem; }
+    h3 { margin-bottom: 0.5rem; }
+    button { padding: 0.4rem 0.8rem; }
+    pre {
+      margin-top: 1rem;
+      padding: 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #f7f7f7;
+      max-width: 900px;
+      overflow: auto;
+    }
   </style>
-
   <script>
+    // Detecta a base da aplicação (para funcionar em subpath / proxy)
     (function () {
       const p = window.location.pathname;
       const prefix = p.includes("/static/") ? p.split("/static/")[0] : "";
@@ -31,110 +28,35 @@
   </script>
 </head>
 <body>
-  <div class="card">
-    <h2>🧪 Teste – POST /analytics</h2>
-    <p class="muted">Base detectada: <strong id="base"></strong></p>
+  <h3>Teste do serviço POST /analytics</h3>
 
-    <div class="row">
-      <div class="col">
-        <label>activityID</label>
-        <input id="activityID" value="TESTE123" />
-      </div>
-      <div class="col">
-        <label>Query (carregada de /analytics/available)</label>
-        <select id="querySelect">
-          <option value="">(carregando...)</option>
-        </select>
-      </div>
-    </div>
+  <button onclick="testar()">Enviar pedido de analytics</button>
 
-    <label>Payload (JSON) – você pode ajustar se necessário</label>
-    <textarea id="payload"></textarea>
-
-    <button id="btn">Executar POST /analytics</button>
-
-    <h3>Resposta</h3>
-    <pre id="out">{}</pre>
-
-    <p><a href="index.html">Voltar</a></p>
-  </div>
+  <h4>Resposta:</h4>
+  <pre id="resposta"></pre>
 
   <script>
-    document.getElementById("base").textContent = window.__BASE__ + "/";
-    const out = document.getElementById("out");
-    const querySelect = document.getElementById("querySelect");
-    const payloadBox = document.getElementById("payload");
-    const activityIDBox = document.getElementById("activityID");
-
-    function buildPayload() {
-      const activityID = activityIDBox.value.trim() || "TESTE123";
-      const query = querySelect.value || "events_count";
-      return {
-        activityID,
-        query
-      };
-    }
-
-    function refreshPayloadBox() {
-      payloadBox.value = JSON.stringify(buildPayload(), null, 2);
-    }
-
-    async function loadQueries() {
-      const url = window.__BASE__ + "/analytics/available";
-      try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("HTTP " + res.status);
-        const data = await res.json();
-
-        const arr = (data && data.available_queries) ? data.available_queries : [];
-        querySelect.innerHTML = "";
-
-        if (!Array.isArray(arr) || arr.length === 0) {
-          querySelect.innerHTML = "<option value=\"events_count\">events_count (fallback)</option>";
-        } else {
-          for (const q of arr) {
-            const opt = document.createElement("option");
-            opt.value = q;
-            opt.textContent = q;
-            querySelect.appendChild(opt);
-          }
-        }
-      } catch (e) {
-        querySelect.innerHTML = "<option value=\"events_count\">events_count (fallback)</option>";
-      } finally {
-        refreshPayloadBox();
-      }
-    }
-
-    activityIDBox.addEventListener("input", refreshPayloadBox);
-    querySelect.addEventListener("change", refreshPayloadBox);
-
-    document.getElementById("btn").addEventListener("click", async () => {
+    async function testar() {
       const url = window.__BASE__ + "/analytics";
-      out.textContent = "POST: " + url + "\n\n";
-
-      let payload;
-      try {
-        payload = JSON.parse(payloadBox.value);
-      } catch (e) {
-        out.textContent += "JSON inválido no payload.\n";
-        return;
-      }
+      const body = { activityID: "TESTE123" };
 
       try {
-        const res = await fetch(url, {
+        const resp = await fetch(url, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(body)
         });
-        const text = await res.text();
-        out.textContent += "HTTP " + res.status + "\n\n" + text;
-      } catch (e) {
-        out.textContent += "Erro: " + (e && e.message ? e.message : e);
-      }
-    });
 
-    loadQueries();
+        const data = await resp.json();
+        document.getElementById("resposta").textContent =
+          JSON.stringify(data, null, 2);
+      } catch (e) {
+        document.getElementById("resposta").textContent =
+          "Erro ao chamar o serviço: " + e;
+      }
+    }
   </script>
 </body>
 </html>

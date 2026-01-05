@@ -50,6 +50,9 @@ class ActivityProviderFacade:
         self.base_url = (base_url or "").rstrip("/")
         self._params_contract = _PARAMS_CONTRACT
 
+    # ---------------------------------------------------------------------
+    # Utilitário interno para resolver o base_url efetivo
+    # ---------------------------------------------------------------------
     def _effective_base_url(self, public_base_url: Optional[str] = None) -> str:
         """
         Preferir public_base_url (derivado do Request/Proxy),
@@ -61,83 +64,89 @@ class ActivityProviderFacade:
             return self.base_url.rstrip("/")
         return ""
 
+    # ---------------------------------------------------------------------
+    # /config_url  (HTML de configuração – contrato Inven!RA)
+    # ---------------------------------------------------------------------
     def get_config_html(self, public_base_url: Optional[str] = None) -> str:
         """
-        HTML igual ao projeto 20/20 (activity_provider_invenra).
-        Não inclui botões; a Inven!RA recolhe campos diretamente.
+        HTML de configuração, alinhado com a app anterior (20/20).
+        A Inven!RA recolhe diretamente os valores dos campos desta página.
         """
         _ = self._effective_base_url(
-            # reservado (se quiser evoluir com <base href=...>)
-            public_base_url)
+            public_base_url)  # reservado para evolução
+
         return """
-    <!DOCTYPE html>
-    <html lang="pt">
-    <head>
-        <meta charset="UTF-8" />
-        <title>Configuração – Sopa de Letras</title>
-        <style>
-            body { font-family: Arial, sans-serif; margin: 1.5rem; }
-            h1 { font-size: 1.4rem; }
-            label { display: block; margin-top: 0.8rem; font-weight: bold; }
-            input[type="text"], input[type="number"], textarea, select {
-                width: 100%; max-width: 600px; padding: 0.3rem; margin-top: 0.2rem;
-            }
-            small { color: #555; display: block; margin-top: 0.15rem; }
-            .checkbox-group { margin-top: 0.5rem; }
-        </style>
-    </head>
-    <body>
-        <h1>Configuração da Atividade – Jogo Sopa de Letras</h1>
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8" />
+    <title>Configuração – Sopa de Letras</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 1.5rem; }
+        h1 { font-size: 1.4rem; }
+        label { display: block; margin-top: 0.8rem; font-weight: bold; }
+        input[type="text"], input[type="number"], textarea, select {
+            width: 100%; max-width: 600px; padding: 0.3rem; margin-top: 0.2rem;
+        }
+        small { color: #555; display: block; margin-top: 0.15rem; }
+        .checkbox-group { margin-top: 0.5rem; }
+    </style>
+</head>
+<body>
+    <h1>Configuração da Atividade – Jogo Sopa de Letras</h1>
 
-        <label for="nome">Nome da atividade</label>
-        <input id="nome" name="nome" type="text" value="Sopa de Letras – Vocabulário" />
-        <small>Identificação da atividade para o professor.</small>
+    <label for="nome">Nome da atividade</label>
+    <input id="nome" name="nome" type="text" value="Sopa de Letras – Vocabulário" />
+    <small>Identificação da atividade para o professor.</small>
 
-        <label for="orientacoes">Orientações para o aluno</label>
-        <textarea id="orientacoes" name="orientacoes" rows="4">
+    <label for="orientacoes">Orientações para o aluno</label>
+    <textarea id="orientacoes" name="orientacoes" rows="4">
 Encontre todas as palavras relacionadas ao tema proposto, no idioma alvo, dentro do tempo limite.
-        </textarea>
-        <small>Texto exibido aos alunos com instruções da atividade.</small>
+    </textarea>
+    <small>Texto exibido aos alunos com instruções da atividade.</small>
 
-        <label for="tempoLimiteSegundos">Tempo limite por tentativa (segundos)</label>
-        <input id="tempoLimiteSegundos" name="tempoLimiteSegundos" type="number" value="300" min="30" max="3600" />
-        <small>Tempo máximo para o aluno completar uma tentativa.</small>
+    <label for="tempoLimiteSegundos">Tempo limite por tentativa (segundos)</label>
+    <input id="tempoLimiteSegundos" name="tempoLimiteSegundos" type="number" value="300" min="30" max="3600" />
+    <small>Tempo máximo para o aluno completar uma tentativa.</small>
 
-        <label for="tamanhoQuadro">Tamanho do quadro (linhas/colunas)</label>
-        <input id="tamanhoQuadro" name="tamanhoQuadro" type="number" value="12" min="6" max="20" />
-        <small>Define o tamanho da grelha de letras.</small>
+    <label for="tamanhoQuadro">Tamanho do quadro (linhas/colunas)</label>
+    <input id="tamanhoQuadro" name="tamanhoQuadro" type="number" value="12" min="6" max="20" />
+    <small>Define o tamanho da grelha de letras.</small>
 
-        <div class="checkbox-group">
-            <input id="sensivelMaiusculas" name="sensivelMaiusculas" type="checkbox" />
-            <label for="sensivelMaiusculas" style="display:inline; font-weight:normal;">
-                Diferenciar maiúsculas e minúsculas
-            </label>
-        </div>
+    <div class="checkbox-group">
+        <input id="sensivelMaiusculas" name="sensivelMaiusculas" type="checkbox" />
+        <label for="sensivelMaiusculas" style="display:inline; font-weight:normal;">
+            Diferenciar maiúsculas e minúsculas
+        </label>
+    </div>
 
-        <div class="checkbox-group">
-            <input id="permitirDiagonais" name="permitirDiagonais" type="checkbox" checked />
-            <label for="permitirDiagonais" style="display:inline; font-weight:normal;">
-                Permitir palavras na diagonal
-            </label>
-        </div>
+    <div class="checkbox-group">
+        <input id="permitirDiagonais" name="permitirDiagonais" type="checkbox" checked />
+        <label for="permitirDiagonais" style="display:inline; font-weight:normal;">
+            Permitir palavras na diagonal
+        </label>
+    </div>
 
-        <label for="parametrosPalavras">Parâmetros de palavras (JSON)</label>
-        <textarea id="parametrosPalavras" name="parametrosPalavras" rows="6">
+    <label for="parametrosPalavras">Parâmetros de palavras (JSON)</label>
+    <textarea id="parametrosPalavras" name="parametrosPalavras" rows="6">
 {
   "idioma_nativo": ["cachorro", "gato", "casa"],
   "idioma_alvo": ["dog", "cat", "house"]
 }
-        </textarea>
-        <small>JSON com listas de palavras no idioma nativo e no idioma de aprendizagem.</small>
+    </textarea>
+    <small>JSON com listas de palavras no idioma nativo e no idioma de aprendizagem.</small>
 
-        <!--
-            Não há botão "Guardar" ou "OK": a Inven!RA recolhe os valores
-            diretamente dos campos desta página.
-        -->
-    </body>
-    </html>
+    <!--
+        Não há botão "Guardar" ou "OK": a Inven!RA recolhe os valores
+        diretamente dos campos desta página.
+    -->
+</body>
+</html>
         """.strip()
 
+    # ---------------------------------------------------------------------
+    # /user_url  (deploy – contrato Inven!RA)
+    # ---------------------------------------------------------------------
     def resolve_user_url(
         self,
         activity_id: str,
@@ -145,8 +154,8 @@ Encontre todas as palavras relacionadas ao tema proposto, no idioma alvo, dentro
         public_base_url: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
-        Caminho completo (Facade -> Adapter -> InstanceManager -> Proxy -> Builder),
-        evitando “retorno imediato” sem persistência.
+        Resolve o entry_url da atividade, percorrendo o caminho:
+        Facade -> Adapter -> InstanceManager -> Proxy -> Builder.
         """
         activity_id = self.adapter.adapt_activity_id(activity_id)
         user_id = self.adapter.adapt_user_id(user_id)
@@ -190,43 +199,145 @@ Encontre todas as palavras relacionadas ao tema proposto, no idioma alvo, dentro
             "instance_id": instance_id,
         }
 
+    # ---------------------------------------------------------------------
+    # /analytics_list_url  (lista de analytics disponíveis – helper)
+    # ---------------------------------------------------------------------
     def list_analytics(self) -> List[Dict[str, Any]]:
+        """
+        Devolve metadados sobre as queries de analytics disponíveis.
+        Mantemos o formato original (lista de dicionários) para bater
+        com o AnalyticsListResponse e com a ideia de “descrição de queries”.
+        """
         return [
-            {"id": "access_count", "label": "Total de acessos (por atividade)", "method": "POST analytics", "params": [
-                "activityID"]},
-            {"id": "events_count", "label": "Total de eventos (por atividade)", "method": "POST analytics", "params": [
-                "activityID"]},
-            {"id": "user_events_count",
-                "label": "Eventos por aluno (activityID+userID)", "method": "POST analytics", "params": ["activityID", "userID"]},
+            {
+                "id": "default",
+                "label": "Resumo completo por aluno (mock)",
+                "method": "POST /analytics",
+                "params": ["activityID"],
+            },
+            {
+                "id": "tentativas_total",
+                "label": "Tentativas totais (por aluno)",
+                "method": "POST /analytics",
+                "params": ["activityID"],
+            },
+            {
+                "id": "tentativas_corretas",
+                "label": "Tentativas corretas (por aluno)",
+                "method": "POST /analytics",
+                "params": ["activityID"],
+            },
+            {
+                "id": "tentativas_erradas",
+                "label": "Tentativas erradas (por aluno)",
+                "method": "POST /analytics",
+                "params": ["activityID"],
+            },
+            {
+                "id": "tempo_medio_por_acerto_s",
+                "label": "Tempo médio por acerto (s)",
+                "method": "POST /analytics",
+                "params": ["activityID"],
+            },
+            {
+                "id": "percentual_acertos",
+                "label": "% de acertos",
+                "method": "POST /analytics",
+                "params": ["activityID"],
+            },
+            {
+                "id": "percentual_erros",
+                "label": "% de erros",
+                "method": "POST /analytics",
+                "params": ["activityID"],
+            },
         ]
 
-    def query_analytics(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+    # ---------------------------------------------------------------------
+    # /analytics_url  (analytics – contrato Inven!RA + mock 20/20)
+    # ---------------------------------------------------------------------
+    def query_analytics(self, payload: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Versão MOCK do serviço /analytics, devolvendo um JSON
+        compatível com a app anterior (20/20):
+
+        [
+          {
+            "inveniraStdID": 1001,
+            "quantAnalytics": [ { "name": "...","value": ... }, ... ],
+            "qualAnalytics":  [ { "name": "...","value": ... }, ... ]
+          },
+          ...
+        ]
+
+        O parâmetro 'query' é aceite (via ContractAdapter), mas aqui
+        é ignorado para simplificar; em cenário real, poderia filtrar
+        ou agregar com base nos eventos em proxy.list_events(...).
+        """
         activity_id = payload["activityID"]
-        user_id = payload.get("userID")
-        query = payload.get("query") or "default"
+        # user_id = payload.get("userID")
+        # query = payload.get("query") or "default"
+        # params = payload.get("params") or {}
 
-        instance_id = self.instance_manager.get_instance_id(
-            activity_id) or f"inst_{activity_id}"
-        instance = self.proxy.get_instance(instance_id)
-        access_count = (instance or {}).get("access_count", 0)
+        # Poderíamos usar self.proxy.list_events(...) aqui para gerar
+        # dados reais; para a UC, basta MOCK reproduzindo o formato.
 
-        events = self.proxy.list_events(
-            activity_id=activity_id, user_id=user_id)
-        result: Dict[str, Any] = {"activityID": activity_id, "query": query}
+        # Dataset MOCK inspirado no exemplo 20/20:
+        mock_data: List[Dict[str, Any]] = [
+            {
+                "inveniraStdID": 1001,
+                "quantAnalytics": [
+                    {"name": "tentativas_total", "value": 5},
+                    {"name": "tentativas_corretas", "value": 4},
+                    {"name": "tentativas_erradas", "value": 1},
+                    {"name": "tempo_medio_por_acerto_s", "value": 42.5},
+                    {"name": "percentual_acertos", "value": 80},
+                    {"name": "percentual_erros", "value": 20},
+                ],
+                "qualAnalytics": [
+                    {"name": "ultima_palavra_encontrada", "value": "house"},
+                    {
+                        "name": "sequencia_cliques",
+                        "value": ["h(1,1)", "o(1,2)", "u(1,3)", "s(1,4)", "e(1,5)"],
+                    },
+                ],
+            },
+            {
+                "inveniraStdID": 1002,
+                "quantAnalytics": [
+                    {"name": "tentativas_total", "value": 3},
+                    {"name": "tentativas_corretas", "value": 1},
+                    {"name": "tentativas_erradas", "value": 2},
+                    {"name": "tempo_medio_por_acerto_s", "value": 60},
+                    {"name": "percentual_acertos", "value": 33.3},
+                    {"name": "percentual_erros", "value": 66.7},
+                ],
+                "qualAnalytics": [
+                    {"name": "ultima_palavra_encontrada", "value": "cat"},
+                    {
+                        "name": "sequencia_cliques",
+                        "value": ["c(2,1)", "a(2,2)", "t(2,3)"],
+                    },
+                ],
+            },
+        ]
 
-        if query in ("default", "access_count"):
-            result["access_count"] = access_count
-            result["created_at"] = (instance or {}).get("created_at")
-        if query in ("default", "events_count"):
-            result["events_count"] = len(
-                self.proxy.list_events(activity_id=activity_id))
-        if query == "user_events_count":
-            result["user_events_count"] = len(events)
-            result["userID"] = user_id
+        # Se quiser diferenciar por activityID, poderia trocar o dataset
+        # com base em activity_id; aqui retornamos o mesmo conjunto.
+        _ = activity_id  # apenas para deixar claro que está disponível
+        return mock_data
 
-        return result
-
+    # ---------------------------------------------------------------------
+    # Tracking de acesso ao jogo (para futura ligação com analytics real)
+    # ---------------------------------------------------------------------
     def track_game_access(self, activity_id: str, user_id: Optional[str]) -> None:
+        """
+        Regista um evento de acesso ao jogo.
+
+        Hoje é usado apenas para permitir cenários de analytics simples
+        (contagem de acessos / eventos). Mesmo que o /analytics esteja
+        em MOCK, este fluxo demonstra o uso do Proxy e do JsonFileDatabase.
+        """
         activity_id = self.adapter.adapt_activity_id(activity_id)
         user_id = self.adapter.adapt_user_id(user_id)
 
@@ -235,7 +346,6 @@ Encontre todas as palavras relacionadas ao tema proposto, no idioma alvo, dentro
         instance = self.proxy.get_instance(instance_id)
 
         if instance is None:
-            # Mantém caminho completo: se alguém acessar /game direto, ainda cria/persiste corretamente
             game_cfg = self.builder.build()
             instance = {
                 "instance_id": instance_id,

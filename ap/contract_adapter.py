@@ -24,6 +24,13 @@ class ContractAdapter:
 
     @staticmethod
     def adapt_analytics_request(req: AnalyticsQueryRequest) -> Dict[str, Any]:
+        """
+        Normaliza o payload de /analytics, garantindo:
+        - activityID obrigatório e sem espaços
+        - userID opcional, mas normalizado
+        - query com valor 'default' quando vazio
+        - params sempre dicionário (fallback para {})
+        """
         return {
             "activityID": ContractAdapter.adapt_activity_id(req.activityID),
             "userID": ContractAdapter.adapt_user_id(req.userID),

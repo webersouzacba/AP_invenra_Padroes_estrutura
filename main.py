@@ -93,6 +93,9 @@ def create_app() -> FastAPI:
         # 307 preserva método, mas aqui é GET; poderia ser 302 também.
         return RedirectResponse(url=target, status_code=307)
 
+    # ------------------------------------------------------------------
+    # /config_url e /config
+    # ------------------------------------------------------------------
     @app.get("/config_url", response_class=HTMLResponse, tags=["InvenRA Contract"])
     @app.get("/config", response_class=HTMLResponse, tags=["Compatibility"])
     def config_url(request: Request):
@@ -100,6 +103,9 @@ def create_app() -> FastAPI:
         public_base = _public_base_url(request)
         return facade.get_config_html(public_base_url=public_base)
 
+    # ------------------------------------------------------------------
+    # /json_params_url e /params
+    # ------------------------------------------------------------------
     @app.get("/json_params_url", tags=["InvenRA Contract"])
     @app.get("/params", tags=["Compatibility"])
     def json_params_url():
@@ -114,6 +120,9 @@ def create_app() -> FastAPI:
         """
         return facade.get_params_contract()
 
+    # ------------------------------------------------------------------
+    # /user_url e /deploy
+    # ------------------------------------------------------------------
     @app.get("/user_url", response_model=UserUrlResponse, tags=["InvenRA Contract"])
     @app.get("/deploy", response_model=UserUrlResponse, tags=["Compatibility"])
     def user_url(
@@ -124,6 +133,9 @@ def create_app() -> FastAPI:
         public_base = _public_base_url(request)
         return facade.resolve_user_url(activityID, userID, public_base_url=public_base)
 
+    # ------------------------------------------------------------------
+    # /analytics_list_url e /analytics/available
+    # ------------------------------------------------------------------
     @app.get(
         "/analytics_list_url",
         response_model=AnalyticsListResponse,
@@ -135,19 +147,47 @@ def create_app() -> FastAPI:
         tags=["Compatibility"],
     )
     def analytics_list_url():
+        """
+        Lista de analytics disponíveis (metadados).
+        Mantém o formato esperado por AnalyticsListResponse:
+
+        {
+          "available_queries": [ { "id": "...", "label": "...", ... }, ... ]
+        }
+        """
         return {"available_queries": facade.list_analytics()}
 
+    # ------------------------------------------------------------------
+    # /analytics_url e /analytics
+    # ------------------------------------------------------------------
     @app.post("/analytics_url", tags=["InvenRA Contract"])
     @app.post("/analytics", tags=["Compatibility"])
     def analytics_url(req: AnalyticsQueryRequest):
-        payload = adapter.adapt_analytics_request(req)
-        result = facade.query_analytics(payload)
-        return {
-            "activityID": payload["activityID"],
-            "query": payload["query"],
-            "result": result,
+        """
+        Serviço de analytics no formato da app anterior (20/20).
+
+        Request típico (exemplo):
+        {
+          "activityID": "TESTE123"
         }
 
+        Resposta (mock):
+
+        [
+          {
+            "inveniraStdID": 1001,
+            "quantAnalytics": [...],
+            "qualAnalytics": [...]
+          },
+          ...
+        ]
+        """
+        payload = adapter.adapt_analytics_request(req)
+        return facade.query_analytics(payload)
+
+    # ------------------------------------------------------------------
+    # /game/{activityID} – página demo para simular entry_url
+    # ------------------------------------------------------------------
     @app.get("/game/{activityID}", response_class=HTMLResponse, tags=["Demo"])
     def game_page(request: Request, activityID: str, userID: Optional[str] = None):
         facade.track_game_access(activityID, userID)

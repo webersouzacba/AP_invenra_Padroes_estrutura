@@ -156,22 +156,6 @@ http://69.6.220.255:9001/docs
 
 ---
 
-# Páginas de teste (HTML)
-
-No mesmo estilo do repositório anterior:
-
-- Índice: `/static/index.html`
-- Deploy (GET): `/static/teste_deploy_GET.html`
-- Analytics (POST): `/static/teste_analytics_POST.html`
-
-Exemplo:
-
-```text
-http://69.6.220.255:9001/static/index.html
-```
-
----
-
 # Estrutura do Projeto
 
 ```

@@ -49,6 +49,7 @@ O serviço está publicado em:
 
 JSON de registo do Activity Provider
 
+```json
 {
   "name": "Sopa de Letras – APSI (Padrões Estruturais)",
   "config_url":    "http://69.6.220.255:9001/config",

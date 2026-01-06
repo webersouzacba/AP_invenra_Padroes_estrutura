@@ -58,6 +58,7 @@ JSON de registo do Activity Provider
   "analytics_url": "http://69.6.220.255:9001/analytics",
   "analytics_list_url":"http://69.6.220.255:9001/analytics/available"
 }
+```
 
 # 🔌 Endpoints da API
 Os URLs abaixo seguem o Contrato Oficial Inven!RA.

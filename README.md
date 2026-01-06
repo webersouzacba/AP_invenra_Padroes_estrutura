@@ -42,7 +42,7 @@ O Activity Provider permite que a plataforma Inven!RA:
 
 O serviço está publicado em:
 
-`http://69.6.220.255:9000/`
+`http://69.6.220.255:9001/`
 
 ---
 📡 Integração com a Inven!RA
@@ -51,11 +51,11 @@ JSON de registo do Activity Provider
 
 {
   "name": "Sopa de Letras – APSI (Padrões Estruturais)",
-  "config_url":    "http://69.6.220.255/AP_invenra_Padroes_estrutura/config",
-  "json_params_url":"http://69.6.220.255/AP_invenra_Padroes_estrutura/params",
-  "user_url":      "http://69.6.220.255/AP_invenra_Padroes_estrutura/deploy",
-  "analytics_url": "http://69.6.220.255/AP_invenra_Padroes_estrutura/analytics",
-  "analytics_list_url":"http://69.6.220.255/AP_invenra_Padroes_estrutura/analytics/available"
+  "config_url":    "http://69.6.220.255:9001/config",
+  "json_params_url":"http://69.6.220.255:9001/params",
+  "user_url":      "http://69.6.220.255:9001/deploy",
+  "analytics_url": "http://69.6.220.255:9001/analytics",
+  "analytics_list_url":"http://69.6.220.255:9001/analytics/available"
 }
 
 # 🔌 Endpoints da API
@@ -70,7 +70,7 @@ Retorna HTML contendo os campos de configuração.
 Exemplo:
 
 ```text
-http://69.6.220.255:9000/config
+http://69.6.220.255:9001/config
 ```
 
 ---
@@ -84,7 +84,7 @@ Retorna JSON com schema/parametrização.
 Exemplo:
 
 ```text
-http://69.6.220.255:9000/params
+http://69.6.220.255:9001/params
 ```
 
 ---
@@ -98,7 +98,7 @@ Retorna JSON com `entry_url` (URL de acesso ao jogo para o aluno).
 Exemplo:
 
 ```text
-http://69.6.220.255:9000/deploy?activityID=TESTE123
+http://69.6.220.255:9001/deploy?activityID=TESTE123
 ```
 
 ---
@@ -110,7 +110,7 @@ http://69.6.220.255:9000/deploy?activityID=TESTE123
 URL:
 
 ```text
-http://69.6.220.255:9000/analytics
+http://69.6.220.255:9001/analytics
 ```
 
 Body exemplo:
@@ -133,7 +133,7 @@ Body exemplo:
 Exemplo:
 
 ```text
-http://69.6.220.255:9000/analytics/available
+http://69.6.220.255:9001/analytics/available
 ```
 
 ---
@@ -143,7 +143,7 @@ http://69.6.220.255:9000/analytics/available
 Para testar o endpoint sem Postman, use a página HTML interativa:
 
 ```text
-http://69.6.220.255:9000/static/teste_analytics_POST.html
+http://69.6.220.255:9001/static/teste_analytics_POST.html
 ```
 
 ---
@@ -151,7 +151,7 @@ http://69.6.220.255:9000/static/teste_analytics_POST.html
 ## Swagger (documentação automática)
 
 ```text
-http://69.6.220.255:9000/docs
+http://69.6.220.255:9001/docs
 ```
 
 ---
@@ -167,7 +167,7 @@ No mesmo estilo do repositório anterior:
 Exemplo:
 
 ```text
-http://69.6.220.255:9000/static/index.html
+http://69.6.220.255:9001/static/index.html
 ```
 
 ---
@@ -175,24 +175,26 @@ http://69.6.220.255:9000/static/index.html
 # Estrutura do Projeto
 
 ```
-AP_invenra_Padrões_estrutura/
+AP_invenra_Padroes_estrutura/
 │
-├── main.py
-├── requirements.txt
-├── README.md
+├── main.py                     # App FastAPI – pontos de entrada dos serviços REST
+├── requirements.txt            # Dependências Python
+├── README.md                   # Documentação do projeto
 ├── .gitignore
-├── static/
-│   ├── index.html
-│   ├── teste_deploy_GET.html
-│   └── teste_analytics_POST.html
-└── ap/
-    ├── facade.py              # Facade
-    ├── contract_adapter.py    # Adapter
-    ├── persistence_proxy.py   # Proxy
-    ├── store_json.py          # persistência simples (JSON)
-    ├── builder.py             # Builder (suporte)
-    ├── instance_manager.py    # Singleton (suporte)
-    └── models.py              # DTOs (Pydantic)
+│
+├── static/                     # Páginas HTML de apoio e testes manuais
+│   ├── index.html              # Página principal de navegação e descrição da API
+│   ├── teste_deploy_GET.html   # Página de teste do endpoint /deploy
+│   └── teste_analytics_POST.html   # Página de teste do POST /analytics (JSON)
+│
+└── ap/                         # Módulos internos do Activity Provider
+    ├── facade.py               # Facade – coordena os casos de uso principais
+    ├── contract_adapter.py     # Adapter – adapta o contrato Inven!RA para o domínio interno
+    ├── persistence_proxy.py    # Proxy – abstrai o acesso ao armazenamento
+    ├── store_json.py           # Persistência simples em ficheiro JSON (mock)
+    ├── builder.py              # Builder (apoio) – cria a configuração padrão do jogo
+    ├── instance_manager.py     # Singleton (apoio) – gere instâncias da atividade
+    └── models.py               # DTOs e validação (Pydantic)
 ```
 
 ---

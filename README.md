@@ -230,26 +230,9 @@ Abrir:
 
 ---
 
-# Executando no VPS (porta 9000)
-
-Exemplo de execução:
-
-```bash
-pip install -r requirements.txt
-uvicorn main:app --host 0.0.0.0 --port 9000
-```
-
----
-
 # Repositório no GitHub
 
 Nome do repositório:
 
 `AP_invenra_Padrões_estrutura`
-
 ---
-
-# Contato
-
-Weber Marcelo Guirra de Souza  
-MEIW – Universidade Aberta / UTAD

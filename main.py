@@ -138,24 +138,22 @@ def create_app() -> FastAPI:
     # ------------------------------------------------------------------
     @app.get(
         "/analytics_list_url",
-        response_model=AnalyticsListResponse,
         tags=["InvenRA Contract"],
     )
     @app.get(
         "/analytics/available",
-        response_model=AnalyticsListResponse,
         tags=["Compatibility"],
     )
     def analytics_list_url():
         """
-        Lista de analytics disponíveis (metadados).
-        Mantém o formato esperado por AnalyticsListResponse:
+        Lista de analytics disponíveis no formato da app anterior (20/20):
 
         {
-          "available_queries": [ { "id": "...", "label": "...", ... }, ... ]
+          "qualAnalytics":  [ { "name": "...", "type": "..." }, ... ],
+          "quantAnalytics": [ { "name": "...", "type": "..." }, ... ]
         }
         """
-        return {"available_queries": facade.list_analytics()}
+        return facade.list_analytics()
 
     # ------------------------------------------------------------------
     # /analytics_url e /analytics

@@ -2,7 +2,8 @@
 ### Jogo Sopa de Letras – Padrões Estruturais (Facade + Adapter + Proxy)
 
 ### UC: Arquitetura e Padrões de Software (APSI) – MEIW – UAb/UTAD  
-### Autor: Weber Marcelo Guirra de Souza
+### Ano letivo 2025/2026
+### Autor/Aluno: Weber Marcelo Guirra de Souza
 
 ---
 
@@ -11,8 +12,8 @@
 Este projeto implementa um **Activity Provider** compatível com a plataforma **Inven!RA**, com foco na e-atividade de **padrões estruturais**, evidenciando explicitamente:
 
 - **Facade**: `ActivityProviderFacade` como ponto único para os casos de uso do Activity Provider
-- **Adapter**: `ContractAdapter` para normalização/validação e adaptação do contrato (requests/DTOs)
-- **Proxy**: `PersistenceProxy` para intermediar o acesso à persistência (cache + lazy load + centralização de acesso)
+- **Adapter** (apoio): `ContractAdapter` para normalização/validação e adaptação do contrato (requests/DTOs)
+- **Proxy** (apoio): `PersistenceProxy` para intermediar o acesso à persistência (cache + lazy load + centralização de acesso)
 
 Como suporte (de atividades anteriores), este projeto mantém:
 - **Builder**: `WordSearchGameBuilder` para criação/configuração da instância do jogo
@@ -29,9 +30,10 @@ O Activity Provider permite que a plataforma Inven!RA:
 
 ## Tecnologias Utilizadas
 
-- Python 3.x
+- Python 3.12+
 - FastAPI – Framework para APIs REST
 - Uvicorn – Servidor ASGI
+- JSON File Storage (mock de persistência)
 - HTML/JS – Páginas estáticas de teste (sem Postman)
 
 ---
@@ -43,14 +45,21 @@ O serviço está publicado em:
 `http://69.6.220.255:9000/`
 
 ---
+📡 Integração com a Inven!RA
 
-# Endpoints Implementados (versão final)
+JSON de registo do Activity Provider
 
-Os endpoints abaixo seguem o **modelo do repositório anterior** (compatibilidade) e mantêm **aliases do contrato**.
+{
+  "name": "Sopa de Letras – APSI (Padrões Estruturais)",
+  "config_url":    "http://69.6.220.255/AP_invenra_Padroes_estrutura/config",
+  "json_params_url":"http://69.6.220.255/AP_invenra_Padroes_estrutura/params",
+  "user_url":      "http://69.6.220.255/AP_invenra_Padroes_estrutura/deploy",
+  "analytics_url": "http://69.6.220.255/AP_invenra_Padroes_estrutura/analytics",
+  "analytics_list_url":"http://69.6.220.255/AP_invenra_Padroes_estrutura/analytics/available"
+}
 
-> Nota importante: **user_url é GET** (e não POST).
-
----
+# 🔌 Endpoints da API
+Os URLs abaixo seguem o Contrato Oficial Inven!RA.
 
 ## 1) Página de configuração da atividade
 

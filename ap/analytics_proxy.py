@@ -17,7 +17,7 @@ class AnalyticsPersistenceProxy:
 
     def __init__(self) -> None:
         # MOCK de dados de analytics por activityID
-        # Aqui você pode alterar os valores conforme quiser simular.
+        # Aqui você pode alterar os valores conforme simulação.
         self._mock_students_by_activity = {
             "TESTE123": [
                 {
@@ -35,7 +35,7 @@ class AnalyticsPersistenceProxy:
                     "comment": "Aluno abandonou a meio."
                 },
             ],
-            # você pode acrescentar outras activities aqui...
+            # Podemos acrescentar outras activities aqui...
         }
 
     def get_available_analytics(self) -> AnalyticsAvailable:

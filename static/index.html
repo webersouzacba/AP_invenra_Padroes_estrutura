@@ -1,124 +1,94 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Activity Provider – Inven!RA (Padrões Estruturais)</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 2rem;
-            background: #f0f2f5;
-            display: flex;
-            justify-content: center;
-        }
-        .card {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            max-width: 900px;
-            width: 100%;
-        }
-        h1 {
-            color: #2c3e50;
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-        h2 {
-            color: #555;
-            font-size: 1.1rem;
-            margin-top: 0;
-            margin-bottom: 0.5rem;
-            font-weight: normal;
-        }
-        .project-title {
-            color: #0066cc;
-            font-weight: bold;
-            font-size: 1.3rem;
-            margin-top: 1.5rem;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 0.5rem;
-        }
-        .section-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-top: 1.5rem;
-            color: #333;
-        }
-        ul {
-            line-height: 1.8;
-            background: #fafafa;
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            border: 1px solid #eee;
-        }
-        a {
-            color: #0066cc;
-            font-weight: bold;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        pre {
-            background: #0b1020;
-            color: #e8e8e8;
-            padding: 1rem;
-            border-radius: 8px;
-            overflow-x: auto;
-            border: 1px solid #222a44;
-        }
-        code {
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-                "Liberation Mono", "Courier New", monospace;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Activity Provider – Inven!RA (Padrões Estruturais)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 2rem;
+    }
+    .card {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 1.8rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    }
+    h1, h2, h3 {
+      margin-top: 0;
+    }
+    pre {
+      background: #0b1020;
+      color: #e5efff;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow: auto;
+      font-size: 0.9rem;
+    }
+    section {
+      margin-top: 1.5rem;
+    }
+    ul {
+      padding-left: 1.2rem;
+    }
+    a {
+      color: #0056b3;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .muted {
+      color: #666;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
+  <div class="card">
+    <h1>MEIW – Mestrado em Engenharia Informática e Tecnologia Web</h1>
+    <p class="muted">
+      Arquitetura e Padrões de Software (APSI)<br/>
+      Ano letivo 2025/2026
+    </p>
 
-    <div class="card">
-        <h1>MEIW – Mestrado em Engenharia Informática e Tecnologia Web</h1>
-        <h2>Arquitetura e Padrões de Software (APSI)</h2>
-        <h2>Ano letivo 2025/2026</h2>
+    <h2>Arquitetura Inven!RA – Activity Provider – Sopa de Letras (Padrões Estruturais)</h2>
 
-        <div class="project-title">
-            Arquitetura Inven!RA – Activity Provider – Sopa de Letras (Padrões Estruturais)
-        </div>
-
-        <p>JSON para registo dos URLs de serviços na Inven!RA:</p>
-
-        <pre><code>{
+    <section>
+      <h3>JSON para registo dos URLs de serviços na Inven!RA:</h3>
+      <pre>{
   "name": "Sopa de Letras – APSI (Padrões Estruturais)",
-  "config_url": "http://69.6.220.255/AP_invenra_Padroes_estrutura/config",
-  "json_params_url": "http://69.6.220.255/AP_invenra_Padroes_estrutura/params",
-  "user_url": "http://69.6.220.255/AP_invenra_Padroes_estrutura/deploy",
+  "config_url":    "http://69.6.220.255/AP_invenra_Padroes_estrutura/config",
+  "json_params_url":"http://69.6.220.255/AP_invenra_Padroes_estrutura/params",
+  "user_url":      "http://69.6.220.255/AP_invenra_Padroes_estrutura/deploy",
   "analytics_url": "http://69.6.220.255/AP_invenra_Padroes_estrutura/analytics",
-  "analytics_list_url": "http://69.6.220.255/AP_invenra_Padroes_estrutura/analytics/available"
-}</code></pre>
+  "analytics_list_url":"http://69.6.220.255/AP_invenra_Padroes_estrutura/analytics/available"
+}</pre>
+    </section>
 
-        <h3 class="section-title">Endpoints</h3>
-        <ul>
-            <!-- Links relativos: sob /AP_invenra_Padroes_estrutura/static/index.html,
-                 "../config" resolve para /AP_invenra_Padroes_estrutura/config -->
-            <li><a href="../config" target="_blank">/config</a> – Página de configuração da atividade (HTML)</li>
-            <li><a href="../params" target="_blank">/params</a> – Lista de parâmetros configuráveis (JSON)</li>
-            <li><a href="../analytics/available" target="_blank">/analytics/available</a> – Lista de analytics disponíveis (JSON)</li>
-            <li><a href="../deploy?activityID=TESTE123" target="_blank">/deploy?activityID=TESTE123</a> – Simulação de Deploy</li>
-            <li><a href="../docs" target="_blank">/docs</a> – Swagger UI</li>
-        </ul>
+    <section>
+      <h3>Endpoints</h3>
+      <ul>
+        <li><a href="/config" target="_blank">/config</a> – Página de configuração da atividade (HTML)</li>
+        <li><a href="/params" target="_blank">/params</a> – Lista de parâmetros configuráveis (JSON)</li>
+        <li><a href="/analytics/available" target="_blank">/analytics/available</a> – Lista de analytics disponíveis (JSON)</li>
+        <li><a href="/deploy?activityID=TESTE123" target="_blank">/deploy?activityID=TESTE123</a> – Simulação de Deploy</li>
+        <li><a href="/static/teste_analytics_POST.html" target="_blank">/analytics – Página de teste do POST (JSON)</a></li>
+      </ul>
+    </section>
 
-        <h3 class="section-title">Testes</h3>
-        <ul>
-            <li><a href="teste_analytics_POST.html" target="_blank">Página de teste do POST /analytics</a></li>
-        </ul>
-
-        <h3 class="section-title">Recursos</h3>
-        <ul>
-            <li><a href="index.html" target="_blank">Esta página (index.html)</a></li>
-        </ul>
-    </div>
-
+    <section>
+      <h3>Swagger UI</h3>
+      <ul>
+        <li><a href="/docs" target="_blank">/docs – Swagger UI</a></li>
+      </ul>
+    </section>
+  </div>
 </body>
 </html>

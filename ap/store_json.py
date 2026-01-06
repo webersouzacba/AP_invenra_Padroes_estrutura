@@ -6,7 +6,6 @@ from typing import Any, Dict
 
 
 class JsonFileDatabase:
-    """Very small JSON file persistence layer."""
 
     def __init__(self, filepath: str) -> None:
         self.filepath = filepath

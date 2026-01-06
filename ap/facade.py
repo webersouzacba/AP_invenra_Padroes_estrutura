@@ -50,9 +50,8 @@ class ActivityProviderFacade:
         self.base_url = (base_url or "").rstrip("/")
         self._params_contract = _PARAMS_CONTRACT
 
-    # ---------------------------------------------------------------------
     # Utilitário interno para resolver o base_url efetivo
-    # ---------------------------------------------------------------------
+
     def _effective_base_url(self, public_base_url: Optional[str] = None) -> str:
         """
         Preferir public_base_url (derivado do Request/Proxy),
@@ -64,13 +63,10 @@ class ActivityProviderFacade:
             return self.base_url.rstrip("/")
         return ""
 
-    # ---------------------------------------------------------------------
     # /config_url  (HTML de configuração – contrato Inven!RA)
-    # ---------------------------------------------------------------------
     def get_config_html(self, public_base_url: Optional[str] = None) -> str:
         """
-        HTML de configuração, alinhado com a app anterior (20/20).
-        A Inven!RA recolhe diretamente os valores dos campos desta página.
+        HTML de configuração. A Inven!RA recolhe diretamente os valores dos campos desta página.
         """
         _ = self._effective_base_url(
             public_base_url)  # reservado para evolução
@@ -144,9 +140,7 @@ Encontre todas as palavras relacionadas ao tema proposto, no idioma alvo, dentro
 </html>
         """.strip()
 
-    # ---------------------------------------------------------------------
     # /user_url  (deploy – contrato Inven!RA)
-    # ---------------------------------------------------------------------
     def resolve_user_url(
         self,
         activity_id: str,
@@ -199,68 +193,36 @@ Encontre todas as palavras relacionadas ao tema proposto, no idioma alvo, dentro
             "instance_id": instance_id,
         }
 
-    # ---------------------------------------------------------------------
-    # /analytics_list_url  (lista de analytics disponíveis – helper)
-    # ---------------------------------------------------------------------
-    def list_analytics(self) -> List[Dict[str, Any]]:
+    # /analytics_list_url  (lista de analytics disponíveis – contrato Inven!RA)
+    def list_analytics(self) -> Dict[str, Any]:
         """
-        Devolve metadados sobre as queries de analytics disponíveis.
-        Mantemos o formato original (lista de dicionários) para bater
-        com o AnalyticsListResponse e com a ideia de “descrição de queries”.
-        """
-        return [
-            {
-                "id": "default",
-                "label": "Resumo completo por aluno (mock)",
-                "method": "POST /analytics",
-                "params": ["activityID"],
-            },
-            {
-                "id": "tentativas_total",
-                "label": "Tentativas totais (por aluno)",
-                "method": "POST /analytics",
-                "params": ["activityID"],
-            },
-            {
-                "id": "tentativas_corretas",
-                "label": "Tentativas corretas (por aluno)",
-                "method": "POST /analytics",
-                "params": ["activityID"],
-            },
-            {
-                "id": "tentativas_erradas",
-                "label": "Tentativas erradas (por aluno)",
-                "method": "POST /analytics",
-                "params": ["activityID"],
-            },
-            {
-                "id": "tempo_medio_por_acerto_s",
-                "label": "Tempo médio por acerto (s)",
-                "method": "POST /analytics",
-                "params": ["activityID"],
-            },
-            {
-                "id": "percentual_acertos",
-                "label": "% de acertos",
-                "method": "POST /analytics",
-                "params": ["activityID"],
-            },
-            {
-                "id": "percentual_erros",
-                "label": "% de erros",
-                "method": "POST /analytics",
-                "params": ["activityID"],
-            },
-        ]
+        Devolve a lista de analytics disponíveis no MESMO formato
+        da aplicação anterior (20/20):
 
-    # ---------------------------------------------------------------------
+        {
+          "qualAnalytics":  [ { "name": "...", "type": "..." }, ... ],
+          "quantAnalytics": [ { "name": "...", "type": "..." }, ... ]
+        }
+        """
+        return {
+            "qualAnalytics": [
+                {"name": "ultima_palavra_encontrada", "type": "text/plain"},
+                {"name": "sequencia_cliques", "type": "array/string"},
+            ],
+            "quantAnalytics": [
+                {"name": "tentativas_total", "type": "integer"},
+                {"name": "tentativas_corretas", "type": "integer"},
+                {"name": "tentativas_erradas", "type": "integer"},
+                {"name": "tempo_medio_por_acerto_s", "type": "number"},
+                {"name": "percentual_acertos", "type": "number"},
+                {"name": "percentual_erros", "type": "number"},
+            ],
+        }
+
     # /analytics_url  (analytics – contrato Inven!RA + mock 20/20)
-    # ---------------------------------------------------------------------
     def query_analytics(self, payload: Dict[str, Any]) -> List[Dict[str, Any]]:
         """
         Versão MOCK do serviço /analytics, devolvendo um JSON
-        compatível com a app anterior (20/20):
-
         [
           {
             "inveniraStdID": 1001,
@@ -282,7 +244,7 @@ Encontre todas as palavras relacionadas ao tema proposto, no idioma alvo, dentro
         # Poderíamos usar self.proxy.list_events(...) aqui para gerar
         # dados reais; para a UC, basta MOCK reproduzindo o formato.
 
-        # Dataset MOCK inspirado no exemplo 20/20:
+        # Dataset MOCK
         mock_data: List[Dict[str, Any]] = [
             {
                 "inveniraStdID": 1001,
@@ -322,7 +284,7 @@ Encontre todas as palavras relacionadas ao tema proposto, no idioma alvo, dentro
             },
         ]
 
-        # Se quiser diferenciar por activityID, poderia trocar o dataset
+        # Futuramente diferenciar por activityID, trocar o dataset
         # com base em activity_id; aqui retornamos o mesmo conjunto.
         _ = activity_id  # apenas para deixar claro que está disponível
         return mock_data

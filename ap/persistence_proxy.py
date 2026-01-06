@@ -7,7 +7,7 @@ from .store_json import JsonFileDatabase
 
 
 class PersistenceProxy:
-    """Proxy (Structural Pattern) for persistence access."""
+    """Proxy (Structural Pattern) para acessso a persistencia."""
 
     def __init__(self, db: JsonFileDatabase) -> None:
         self._db = db

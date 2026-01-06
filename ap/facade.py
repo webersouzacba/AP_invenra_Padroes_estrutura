@@ -219,7 +219,7 @@ Encontre todas as palavras relacionadas ao tema proposto, no idioma alvo, dentro
             ],
         }
 
-    # /analytics_url  (analytics – contrato Inven!RA + mock 20/20)
+    # /analytics_url  (analytics – contrato Inven!RA + mock)
     def query_analytics(self, payload: Dict[str, Any]) -> List[Dict[str, Any]]:
         """
         Versão MOCK do serviço /analytics, devolvendo um JSON
